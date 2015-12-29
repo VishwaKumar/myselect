@@ -1,0 +1,32 @@
+<!Doctype html>
+<html>
+	<head>
+		<title>myselect</title>
+	</head>
+	<body>
+		<h1>myselect jQuery Plugin</h1>
+
+		<div class="my-select first"></div>
+		<div class="my-select second"></div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script type="text/javascript" src="myselect.js"></script>
+		<script type="text/javascript">
+			$('.first').myselect({
+        		limit: 5,
+        		onchangeCallback: function (month, year) {
+        			console.log(month);
+        			console.log(year);
+        		}
+        	});
+
+        	$('.second').myselect({
+        		limit: 10,
+        		onchangeCallback: function (month, year) {
+        			console.log(month);
+        			console.log(year);
+        		}
+        	});
+		</script>
+	</body>
+</html>
