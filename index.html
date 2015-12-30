@@ -6,14 +6,18 @@
 	<body>
 		<h1>myselect jQuery Plugin</h1>
 
-		<div class="my-select first"></div>
-		<div class="my-select second"></div>
+		<div class="first"></div>
+		<div class="second"></div>
+		<div class="three"></div>
+
+		<div class="same-class"></div>
+		<div class="same-class"></div>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script type="text/javascript" src="myselect.js"></script>
 		<script type="text/javascript">
 			$('.first').myselect({
-        		limit: 5,
+        		limit: 'current-year',
         		onchangeCallback: function (month, year) {
         			console.log(month);
         			console.log(year);
@@ -21,6 +25,22 @@
         	});
 
         	$('.second').myselect({
+        		limit: 1,
+        		onchangeCallback: function (month, year) {
+        			console.log(month);
+        			console.log(year);
+        		}
+        	});
+
+        	$('.three').myselect({
+        		limit: 5,
+        		onchangeCallback: function (month, year) {
+        			console.log(month);
+        			console.log(year);
+        		}
+        	});
+
+        	$('.same-class').myselect({
         		limit: 10,
         		onchangeCallback: function (month, year) {
         			console.log(month);

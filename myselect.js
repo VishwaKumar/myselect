@@ -159,21 +159,18 @@
 			});
 		}
 
-		return $(thisEle).each(function() {
+    	defaultOptions = $.extend(defaultOptions, settings);       	
+		limitYear = _getYearLimit(defaultOptions.limit);						
+	
+		if(defaultOptions.limit != 'current-year') {
+			_setupDom(thisEle, false);
+		}else {
+			_setupDom(thisEle, true);
+		}
 
-        	defaultOptions = $.extend(defaultOptions, settings);       	
-			limitYear = _getYearLimit(defaultOptions.limit);						
-		
-			if(defaultOptions.limit != 'current-year') {
-				_setupDom(thisEle, false);
-			}else {
-				_setupDom(thisEle, true);
-			}
+		_populateSelect(thisEle, currentYear);
+		_initButtonTexts(thisEle, currentYear, limitYear);
+		_initEventHandlers(thisEle, limitYear, defaultOptions.onchangeCallback);
 
-			_populateSelect(thisEle, currentYear);
-			_initButtonTexts(thisEle, currentYear, limitYear);
-			_initEventHandlers(thisEle, limitYear, defaultOptions.onchangeCallback);
-
-        });
 	};
 })( jQuery, window );
