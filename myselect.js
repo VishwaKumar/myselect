@@ -1,7 +1,7 @@
 (function($, window, undefined) {
 	$.fn.myselect = function(settings) {
 
-		var thisEle = this;
+		var target = this;
 
 		var defaultOptions = {
     		limit: 10,
@@ -163,14 +163,14 @@
 		limitYear = _getYearLimit(defaultOptions.limit);						
 	
 		if(defaultOptions.limit != 'current-year') {
-			_setupDom(thisEle, false);
+			_setupDom(target, false);
 		}else {
-			_setupDom(thisEle, true);
+			_setupDom(target, true);
 		}
 
-		_populateSelect(thisEle, currentYear);
-		_initButtonTexts(thisEle, currentYear, limitYear);
-		_initEventHandlers(thisEle, limitYear, defaultOptions.onchangeCallback);
+		_populateSelect(target, currentYear);
+		_initButtonTexts(target, currentYear, limitYear);
+		_initEventHandlers(target, limitYear, defaultOptions.onchangeCallback);
 
 	};
 })( jQuery, window );
