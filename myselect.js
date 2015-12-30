@@ -4,8 +4,9 @@
 		var target = this;
 
 		var defaultOptions = {
-    		limit: 10,
-    		onchangeCallback: ''
+    		limit : 10,
+    		onchangeCallback : '',
+    		monthNames : 'long'
     	};
 
     	var currentYear = (new Date).getFullYear();
@@ -70,14 +71,17 @@
 				return currentYear - limit;
 		}
 
-		function _setupDom (element, currentYear) {
-			if(currentYear) {
-				$(element).append(select);
-			}else {
+		function _setupDom (element, options, limitYear) {
+			if(options.limit != 'current-year') {
 				$(element).append(previous);
 				$(element).append(select);
 				$(element).append(next);
+			}else {				
+				$(element).append(select);
 			}
+
+			_populateSelect(element, currentYear);
+			_initButtonTexts(element, currentYear, limitYear);
 		}
 
 		function _populateSelect (element, year) {
@@ -159,17 +163,9 @@
 			});
 		}
 
-    	defaultOptions = $.extend(defaultOptions, settings);       	
-		limitYear = _getYearLimit(defaultOptions.limit);						
-	
-		if(defaultOptions.limit != 'current-year') {
-			_setupDom(target, false);
-		}else {
-			_setupDom(target, true);
-		}
-
-		_populateSelect(target, currentYear);
-		_initButtonTexts(target, currentYear, limitYear);
+    	defaultOptions = $.extend(defaultOptions, settings);
+		limitYear = _getYearLimit(defaultOptions.limit);
+		_setupDom(target, defaultOptions, limitYear);
 		_initEventHandlers(target, limitYear, defaultOptions.onchangeCallback);
 
 	};
