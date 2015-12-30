@@ -61,96 +61,118 @@
 
 		var element = pluginWrapper;
 
-		return $(thisEle).each(function() {        	
-
-        	defaultOptions = $.extend(defaultOptions, settings);       	
-		
-			if(defaultOptions.limit == 1)
-				limitYear = currentYear;
-			if(defaultOptions.limit < 1)
-				limitYear = currentYear - 10;
+		function _getYearLimit (limit) {
+			if(limit == 1)
+				return currentYear;
+			if(limit < 1)
+				return currentYear - 10;
 			else
-				limitYear = currentYear - defaultOptions.limit;			
-		
-			if(defaultOptions.limit != 'current-year') {
+				return currentYear - limit;
+		}
+
+		function _setupDom (element, currentYear) {
+			if(currentYear) {
+				$(element).append(select);
+			}else {
 				$(element).append(previous);
 				$(element).append(select);
 				$(element).append(next);
-			}else {
-				$(element).append(select);
 			}
+		}
 
-			$(select).change(function() {
-				var month = $(this).val();
-				var year = parseInt($(select).attr('data-year'));
+		function _populateSelect (element, year) {
+			$select = $(element).children('select');
+			
+			$select.html('');
+			$select.append($('<option/>', {
+				value: "",
+				text : 'Year ' + year
+			}));
+			
+			$.each(longMonthNames, function (index, value) {
+				$select.append($('<option/>', {
+					value: index + 1,
+					text : value + ' ' + year,
+					disabled: (year == currentYear && index + 1 > currentMonth) ? true : false
+				}));
+			});
+			
+			$select.attr('data-year', year);
+
+			if(year == currentYear) {
+				$select.val(currentMonth).trigger('change');
+			}
+		}
+
+		function _initButtonTexts (element, year, limitYear) {
+			var selectedYear = parseInt(year);
+
+			$previous = $(element).children('.previous-year');
+			$next = $(element).children('.next-year');
+
+			if(selectedYear == limitYear)
+				$previous.attr('disabled', true).text(selectedYear - 1);
+			else
+				$previous.attr('disabled', false).text(selectedYear - 1);
 				
-				if (typeof defaultOptions.onchangeCallback === "function") {
-					defaultOptions.onchangeCallback(month, year);
+			if(selectedYear == currentYear)
+				$next.attr('disabled', true).text(selectedYear + 1);
+			else
+				$next.attr('disabled', false).text(selectedYear + 1);
+		}
+
+		function _initEventHandlers (element, limitYear, onchangeCallback) {
+			$select = $(element).children('select');
+			$select.change(function() {
+				var month = $(this).val();
+				var year = parseInt( $select.attr('data-year') );
+				
+				if (typeof onchangeCallback === "function") {
+					onchangeCallback(month, year);
 				}			
 			});
 
-			populateSelect(currentYear);
+			$select.val(currentMonth).trigger('change');
 
-			$(thisEle).append(element);
+			$previous = $(element).children('.previous-year');
+			$next = $(element).children('.next-year');
 
-			$(previous).on('click', function() {
-				var selectedYear = parseInt($(select).attr('data-year'));
+			$previous.on('click', function() {
+				var selectedYear = parseInt( $select.attr('data-year') );
 				var previousYear = selectedYear - 1;
 				
-				populateSelect(previousYear);
+				_populateSelect(element, previousYear);
+				_initButtonTexts(element, previousYear, limitYear);
 			});
 			
-			$(next).on('click', function() {
-				var selectedYear = parseInt($(select).attr('data-year'));
+			$next.on('click', function() {
+				var selectedYear = parseInt( $select.attr('data-year') );
 				var nextYear = selectedYear + 1;
 				
-				populateSelect(nextYear);
-			});
-			
-			$(document).on('data-year', function() {
-			    var year = $(select).attr('data-year');
-			    populateSelect(year);
+				_populateSelect(element, nextYear);
+				_initButtonTexts(element, nextYear, limitYear);
 			});
 
-			function populateSelect(year) {
-				$(select).html("");
-				$(select).append($('<option/>', {
-					value: "",
-					text : 'Year ' + year
-				}));
-				
-				$.each(longMonthNames, function (index, value) {
-					$(select).append($('<option/>', {
-						value: index + 1,
-						text : value + ' ' + year,
-						disabled: (year == currentYear && index + 1 > currentMonth) ? true : false
-					}));
-				});
-				
-				$(select).attr('data-year',year);
-				
-				if(year == currentYear) {
-					$(select).val(currentMonth).trigger('change');
-				}
-				
-				if(defaultOptions.limit != 'current-year') {
-					initializeButtons(year);
-				}
+			$(document).on('data-year', function() {
+			    var year = $select.attr('data-year');
+			    _populateSelect(year);
+			});
+		}
+
+		return $(thisEle).each(function() {
+
+        	defaultOptions = $.extend(defaultOptions, settings);       	
+			limitYear = _getYearLimit(defaultOptions.limit);						
+		
+			if(defaultOptions.limit != 'current-year') {
+				_setupDom(thisEle, false);
+			}else {
+				_setupDom(thisEle, true);
 			}
-			
-			function initializeButtons(year) {
-				var selectedYear = parseInt(year);
-				
-				if(selectedYear == limitYear)
-					$(previous).attr('disabled', true).text(selectedYear - 1);
-				else
-					$(previous).attr('disabled', false).text(selectedYear - 1);
-					
-				if(selectedYear == currentYear)
-					$(next).attr('disabled', true).text(selectedYear + 1);
-				else
-					$(next).attr('disabled', false).text(selectedYear + 1);
-			}
+
+			_populateSelect(thisEle, currentYear);
+			_initButtonTexts(thisEle, currentYear, limitYear);
+			_initEventHandlers(thisEle, limitYear, defaultOptions.onchangeCallback);
 
         });
 	};
